@@ -60,6 +60,12 @@ class _PrincipalState extends State<Principal> {
           return Container();
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/Registrar");
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
