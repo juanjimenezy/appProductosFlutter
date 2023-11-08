@@ -1,3 +1,4 @@
+import 'package:app_2023_10_17/Editar.dart';
 import 'package:flutter/material.dart';
 import 'Principal.dart';
 import 'Registrar.dart';
@@ -13,12 +14,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "flutter demo",
-      theme: ThemeData(primarySwatch: Colors.blueGrey),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.amber),
       // home: const Inicio(),
       initialRoute: "/",
       routes: {
         "/": (context) => const Principal(),
         "/Registrar": (context) => const Registrar(),
+        "/Editar": (context) => const Editar(),
       },
     );
   }
