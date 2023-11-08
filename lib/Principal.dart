@@ -44,10 +44,22 @@ class _PrincipalState extends State<Principal> {
               itemCount: productos.length,
               itemBuilder: (context, index) {
                 final producto = productos[index];
-                return ListTile(
-                  title: Text(producto.nombre),
-                  subtitle: Text(producto.descripcion),
-                  trailing: Text('\$${producto.precio}'),
+                return Column(
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/Editar', arguments: producto);
+                      },
+                      title: Text(producto.nombre),
+                      subtitle: Text(producto.descripcion),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('\$${producto.precio}'),
+                        ],
+                      ),
+                    )
+                  ],
                 );
               },
             );
