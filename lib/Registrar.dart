@@ -12,7 +12,7 @@ class Registrar extends StatefulWidget {
 
 class _RegistrarState extends State<Registrar> {
   TextEditingController cntNombre = TextEditingController();
-  TextEditingController cntPrecio = TextEditingController(text: "0");
+  TextEditingController cntPrecio = TextEditingController();
   TextEditingController cntDescripcion = TextEditingController();
 
   @override
