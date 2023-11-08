@@ -1,5 +1,9 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'Producto.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Editar extends StatefulWidget {
   const Editar({super.key});
@@ -48,13 +52,13 @@ class _EditarState extends State<Editar> {
             ),
             ElevatedButton(
               onPressed: () {
-                editarUsuario();
+                editarProducto();
               },
               child: const Text("Actualizar Datos"),
             ),
             ElevatedButton(
               onPressed: () {
-                eliminarUsuario(context);
+                eliminarProducto(context, idProducto);
               },
               child: const Text("Eliminar"),
             )
@@ -64,7 +68,7 @@ class _EditarState extends State<Editar> {
     );
   }
 
-  void editarUsuario() async {
+  void editarProducto() async {
     String nombre = cntNombre.text;
     int precio = int.parse(cntPrecio.text);
     String descripcion = cntDescripcion.text;
@@ -72,7 +76,7 @@ class _EditarState extends State<Editar> {
     if (nombre.isEmpty || descripcion.isEmpty || precio == 0) {
       validacion();
     } else {
-      //int r             = await Transacciones.edtUsuario(nombre, apellido, fecha, double.parse(peso), id);
+      editProducto(Producto(id: idProducto, nombre: cntNombre.text, precio: int.parse(cntPrecio.text), descripcion: cntDescripcion.text));
       mostrarAlerta();
     }
   }
@@ -98,13 +102,10 @@ class _EditarState extends State<Editar> {
   }
 
   void confirmarEliminar(BuildContext cnt) async {
-    int id = idProducto;
-    //int r    = await Transacciones.eliUsuario(id);
-
     Navigator.restorablePushNamedAndRemoveUntil(cnt, '/', (route) => false);
   }
 
-  eliminarUsuario(BuildContext cnt) {
+  eliminarProducto(BuildContext cnt, int id) {
     Widget btnAceptar = TextButton(
         onPressed: () {
           confirmarEliminar(cnt);
@@ -120,7 +121,7 @@ class _EditarState extends State<Editar> {
 
     AlertDialog al = AlertDialog(
       title: const Text("Alerta"),
-      content: const Text("¿Desea continuar con la eliminación de este usuario?"),
+      content: const Text("¿Desea continuar con la eliminación de este producto?"),
       actions: [btnAceptar, btnCancelar],
     );
 
@@ -129,6 +130,23 @@ class _EditarState extends State<Editar> {
         builder: (BuildContext context) {
           return al;
         });
+  }
+
+  Future<http.Response> editProducto(Producto producto) {
+    const url = 'http://localhost/MOVILAPI/edtProducto.php';
+    return http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'authorization': 'e1f602bf73cc96f53c10bb7f7953a438fb7b3c0a',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id': producto.id,
+        'nombre': producto.nombre,
+        'precio': producto.precio,
+        'descripcion': producto.descripcion,
+      }),
+    );
   }
 
   mostrarAlerta() {
@@ -141,7 +159,7 @@ class _EditarState extends State<Editar> {
 
     AlertDialog al = AlertDialog(
       title: const Text("Mensaje"),
-      content: const Text("Usuario Actualizado con éxito"),
+      content: const Text("Producto Actualizado con éxito"),
       actions: [ok],
     );
 

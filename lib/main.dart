@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
       title: "flutter demo",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.amber),
-      // home: const Inicio(),
       initialRoute: "/",
       routes: {
         "/": (context) => const Principal(),
