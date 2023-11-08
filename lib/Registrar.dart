@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'Producto.dart';
 
 class Registrar extends StatefulWidget {
   const Registrar({super.key});
@@ -15,86 +20,54 @@ class _RegistrarState extends State<Registrar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Registrar")),
-      body: Container(
-        margin: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            TextField(
-              controller: cntNombre,
-              decoration: const InputDecoration(hintText: "Digite Nombre"),
-            ),
-            TextField(
-              controller: cntPrecio,
-              decoration: const InputDecoration(hintText: "Digite el precio"),
-            ),
-            TextField(
-              controller: cntDescripcion,
-              decoration: const InputDecoration(hintText: "Digite descripcion"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                registrarUsuario();
-              },
-              child: const Text("Registrar"),
-            )
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text('Producto'),
+      ),
+      body: FutureBuilder<http.Response>(
+        future: regProducto(Producto(
+          id: 5,
+          nombre: 'PRUEBA4',
+          precio: 5000,
+          descripcion: 'ESTO ES UNA CUARTA PRUEBA',
+        )),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData) {
+            final response = snapshot.data!;
+            return Center(
+              child: Text(
+                'Status code: ${response.statusCode}\nResponse body: ${response.body}',
+              ),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+          return Container();
+        },
       ),
     );
   }
 
-  void registrarUsuario() async {
-    String nombre = cntNombre.text;
-    String precio = cntPrecio.text;
-    String descripcion = cntDescripcion.text;
-
-    if (nombre.isEmpty || precio.isEmpty || descripcion.isEmpty) {
-      validacion();
-    } else {
-      //int r             = await Transacciones.regUsuario(nombre, apellido, fecha, double.parse(peso));
-      mostrarAlerta();
-    }
-  }
-
-  validacion() {
-    Widget ok = TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: const Text("Aceptar"));
-
-    AlertDialog al = AlertDialog(
-      title: const Text("Alerta"),
-      content: const Text("Por favor, complete todos los datos del fomulario"),
-      actions: [ok],
+  Future<http.Response> regProducto(Producto producto) {
+    const url = 'http://localhost/MOVILAPI/regProducto.php';
+    return http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'authorization': 'e1f602bf73cc96f53c10bb7f7953a438fb7b3c0a',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'nombre': producto.nombre,
+        'precio': producto.precio,
+        'descripcion': producto.descripcion,
+      }),
     );
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return al;
-        });
-  }
-
-  mostrarAlerta() {
-    Widget ok = TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-          Navigator.restorablePushNamedAndRemoveUntil(context, '/', (route) => false);
-        },
-        child: const Text("Aceptar"));
-
-    AlertDialog al = AlertDialog(
-      title: const Text("Mensaje"),
-      content: const Text("Se registró el producto"),
-      actions: [ok],
-    );
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return al;
-        });
   }
 }
