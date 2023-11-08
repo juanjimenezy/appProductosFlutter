@@ -12,7 +12,7 @@ class Registrar extends StatefulWidget {
 
 class _RegistrarState extends State<Registrar> {
   TextEditingController cntNombre = TextEditingController();
-  TextEditingController cntPrecio = TextEditingController();
+  TextEditingController cntPrecio = TextEditingController(text: "0");
   TextEditingController cntDescripcion = TextEditingController();
 
   @override
@@ -29,19 +29,30 @@ class _RegistrarState extends State<Registrar> {
             ),
             TextField(
               controller: cntPrecio,
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(hintText: "Digite Precio"),
             ),
             TextField(
               controller: cntDescripcion,
               decoration: const InputDecoration(hintText: "Digite Descripcion"),
             ),
+            const SizedBox(height: 10.0),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(16.0), // Espaciado interno
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Forma del botón
+                ),
+              ),
               onPressed: () {
+                if (cntPrecio.text.isEmpty) {
+                  validacion();
+                }
                 String nombre = cntNombre.text;
-                int precio = int.parse(cntPrecio.text);
+                double precio = double.parse(cntPrecio.text);
                 String descripcion = cntDescripcion.text;
-                if (nombre.isEmpty || descripcion.isEmpty) {
-                  Validacion();
+                if (nombre.isEmpty || descripcion.isEmpty || precio == 0) {
+                  validacion();
                 } else {
                   regProducto(Producto(id: 0, nombre: nombre, precio: precio, descripcion: descripcion));
                   mostrarAlerta();
@@ -71,7 +82,7 @@ class _RegistrarState extends State<Registrar> {
     );
   }
 
-  Validacion() {
+  validacion() {
     Widget ok = TextButton(
         onPressed: () {
           Navigator.pop(context);

@@ -1,7 +1,7 @@
 class Producto {
   final int id;
   final String nombre;
-  final int precio;
+  final double precio;
   final String descripcion;
 
   Producto({
@@ -16,7 +16,7 @@ class Producto {
     return Producto(
       id: json['PRO_ID'] as int,
       nombre: json['PRO_NOMBRE'] as String,
-      precio: json['PRO_PRECIO'] as int,
+      precio: json['PRO_PRECIO'] as double,
       descripcion: json['PRO_DESCRIPCION'] as String,
     );
   }

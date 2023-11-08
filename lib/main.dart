@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "flutter demo",
+      title: "App Productos",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.amber),
       initialRoute: "/",

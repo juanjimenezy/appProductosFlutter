@@ -33,7 +33,7 @@ class _EditarState extends State<Editar> {
     cargarInfo(arg);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Datos del registro")),
+      appBar: AppBar(title: const Text("Editar Producto")),
       body: Container(
         margin: const EdgeInsets.all(10),
         child: Column(
@@ -44,23 +44,46 @@ class _EditarState extends State<Editar> {
             ),
             TextField(
               controller: cntPrecio,
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(hintText: "Digite Precio"),
             ),
             TextField(
               controller: cntDescripcion,
               decoration: const InputDecoration(hintText: "Digite Descripcion"),
             ),
-            ElevatedButton(
-              onPressed: () {
-                editarProducto();
-              },
-              child: const Text("Actualizar Datos"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                eliminarProducto(context, idProducto);
-              },
-              child: const Text("Eliminar"),
+            const SizedBox(height: 10.0),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(16.0), // Espaciado interno
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0), // Forma del botón
+                    ),
+                  ),
+                  onPressed: () {
+                    editarProducto();
+                  },
+                  child: const Text("Actualizar Datos"),
+                ),
+                const SizedBox(width: 10.0),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Color de fondo del botón
+                    foregroundColor: Colors.white, // Color del texto
+                    padding: const EdgeInsets.all(16.0), // Espaciado interno
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0), // Forma del botón
+                    ),
+                  ),
+                  onPressed: () {
+                    eliminarProducto(context, idProducto);
+                  },
+                  child: const Text("Eliminar"),
+                )
+              ],
             )
           ],
         ),
@@ -69,14 +92,17 @@ class _EditarState extends State<Editar> {
   }
 
   void editarProducto() async {
+    if (cntPrecio.text.isEmpty) {
+      validacion();
+    }
     String nombre = cntNombre.text;
-    int precio = int.parse(cntPrecio.text);
+    double precio = double.parse(cntPrecio.text);
     String descripcion = cntDescripcion.text;
 
     if (nombre.isEmpty || descripcion.isEmpty || precio == 0) {
       validacion();
     } else {
-      editProducto(Producto(id: idProducto, nombre: cntNombre.text, precio: int.parse(cntPrecio.text), descripcion: cntDescripcion.text));
+      editProductoHttp(Producto(id: idProducto, nombre: cntNombre.text, precio: double.parse(cntPrecio.text), descripcion: cntDescripcion.text));
       mostrarAlerta();
     }
   }
@@ -102,6 +128,7 @@ class _EditarState extends State<Editar> {
   }
 
   void confirmarEliminar(BuildContext cnt) async {
+    eliminarProductoHttp(idProducto);
     Navigator.restorablePushNamedAndRemoveUntil(cnt, '/', (route) => false);
   }
 
@@ -132,7 +159,7 @@ class _EditarState extends State<Editar> {
         });
   }
 
-  Future<http.Response> editProducto(Producto producto) {
+  Future<http.Response> editProductoHttp(Producto producto) {
     const url = 'http://localhost/MOVILAPI/edtProducto.php';
     return http.post(
       Uri.parse(url),
@@ -146,6 +173,18 @@ class _EditarState extends State<Editar> {
         'precio': producto.precio,
         'descripcion': producto.descripcion,
       }),
+    );
+  }
+
+  Future<http.Response> eliminarProductoHttp(int id) {
+    const url = 'http://localhost/MOVILAPI/eliProductos.php';
+    return http.delete(
+      Uri.parse(url),
+      headers: <String, String>{
+        'authorization': 'e1f602bf73cc96f53c10bb7f7953a438fb7b3c0a',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{'id': id}),
     );
   }
 
