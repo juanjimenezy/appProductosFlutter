@@ -133,12 +133,6 @@ class _EditarState extends State<Editar> {
   }
 
   eliminarProducto(BuildContext cnt, int id) {
-    Widget btnAceptar = TextButton(
-        onPressed: () {
-          confirmarEliminar(cnt);
-        },
-        child: const Text("Aceptar"));
-
     //  boton de cancelar
     Widget btnCancelar = TextButton(
         onPressed: () {
@@ -146,10 +140,16 @@ class _EditarState extends State<Editar> {
         },
         child: const Text("Cancelar"));
 
+    Widget btnAceptar = TextButton(
+        onPressed: () {
+          confirmarEliminar(cnt);
+        },
+        child: const Text("Aceptar"));
+
     AlertDialog al = AlertDialog(
       title: const Text("Alerta"),
       content: const Text("¿Desea continuar con la eliminación de este producto?"),
-      actions: [btnAceptar, btnCancelar],
+      actions: [btnCancelar, btnAceptar],
     );
 
     showDialog(
