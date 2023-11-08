@@ -20,37 +20,39 @@ class _RegistrarState extends State<Registrar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Producto'),
-      ),
-      body: FutureBuilder<http.Response>(
-        future: regProducto(Producto(
-          id: 5,
-          nombre: 'PRUEBA4',
-          precio: 5000,
-          descripcion: 'ESTO ES UNA CUARTA PRUEBA',
-        )),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasData) {
-            final response = snapshot.data!;
-            return Center(
-              child: Text(
-                'Status code: ${response.statusCode}\nResponse body: ${response.body}',
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
-          return Container();
-        },
+      appBar: AppBar(title: const Text("Registrar")),
+      body: Container(
+        margin: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            TextField(
+              controller: cntNombre,
+              decoration: const InputDecoration(hintText: "Digite Nombre"),
+            ),
+            TextField(
+              controller: cntPrecio,
+              decoration: const InputDecoration(hintText: "Digite Precio"),
+            ),
+            TextField(
+              controller: cntDescripcion,
+              decoration: const InputDecoration(hintText: "Digite Descripcion"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String nombre = cntNombre.text;
+                int precio = int.parse(cntPrecio.text);
+                String descripcion = cntDescripcion.text;
+                if (nombre.isEmpty || descripcion.isEmpty) {
+                  Validacion();
+                } else {
+                  regProducto(Producto(id: 0, nombre: nombre, precio: precio, descripcion: descripcion));
+                  mostrarAlerta();
+                }
+              },
+              child: const Text("Registrar"),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -69,5 +71,46 @@ class _RegistrarState extends State<Registrar> {
         'descripcion': producto.descripcion,
       }),
     );
+  }
+
+  Validacion() {
+    Widget ok = TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: const Text("Aceptar"));
+
+    AlertDialog al = AlertDialog(
+      title: const Text("Alerta"),
+      content: const Text("Por favor, complete todos los datos del fomulario"),
+      actions: [ok],
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return al;
+        });
+  }
+
+  mostrarAlerta() {
+    Widget ok = TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+          Navigator.restorablePushNamedAndRemoveUntil(context, '/', (route) => false);
+        },
+        child: const Text("Aceptar"));
+
+    AlertDialog al = AlertDialog(
+      title: const Text("Mensaje"),
+      content: const Text("Se registró el producto"),
+      actions: [ok],
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return al;
+        });
   }
 }
